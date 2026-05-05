@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Language Translator | Heshan Sayakkara</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root{--primary:#667eea;--secondary:#764ba2;--accent:#f093fb;--pink:#f5576c;--gold:#ffd700;--dark:#0a0a14;--card:rgba(255,255,255,0.04);--glass:rgba(255,255,255,0.06);--text:#e8e8f0;--muted:#888;--border:rgba(102,126,234,0.18)}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{background:var(--dark);color:var(--text);font-family:'DM Sans',sans-serif;overflow-x:hidden;cursor:none;min-height:100vh}
+    .cursor{position:fixed;width:10px;height:10px;background:var(--primary);border-radius:50%;pointer-events:none;z-index:99999;transform:translate(-50%,-50%);transition:width .3s,height .3s;mix-blend-mode:screen}
+    .cursor-ring{position:fixed;width:32px;height:32px;border:1.5px solid rgba(102,126,234,.45);border-radius:50%;pointer-events:none;z-index:99998;transform:translate(-50%,-50%);transition:width .3s,height .3s}
+    .bg-wrap{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+    .blob{position:absolute;border-radius:50%;filter:blur(90px);animation:bf 24s ease-in-out infinite}
+    .b1{width:700px;height:700px;background:radial-gradient(circle,rgba(102,126,234,.13),transparent 70%);top:-200px;left:-200px;animation-delay:0s}
+    .b2{width:500px;height:500px;background:radial-gradient(circle,rgba(240,147,251,.09),transparent 70%);bottom:-100px;right:-100px;animation-delay:-8s}
+    .b3{width:350px;height:350px;background:radial-gradient(circle,rgba(245,87,108,.07),transparent 70%);top:45%;left:50%;animation-delay:-16s}
+    @keyframes bf{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(50px,60px) scale(1.05)}66%{transform:translate(-40px,30px) scale(.97)}}
+    .sakura{position:fixed;inset:0;z-index:1;pointer-events:none;overflow:hidden}
+    .petal{position:absolute;top:-20px;width:10px;height:10px;background:linear-gradient(135deg,#ffb7d5,#ff85b3);border-radius:0 50% 0 50%;opacity:.6;animation:pf linear infinite}
+    .petal:nth-child(1){left:6%;animation-duration:9s;animation-delay:0s}
+    .petal:nth-child(2){left:18%;animation-duration:12s;animation-delay:1.8s}
+    .petal:nth-child(3){left:33%;animation-duration:8s;animation-delay:3.2s}
+    .petal:nth-child(4){left:50%;animation-duration:11s;animation-delay:.7s}
+    .petal:nth-child(5){left:65%;animation-duration:9s;animation-delay:2.5s}
+    .petal:nth-child(6){left:79%;animation-duration:10s;animation-delay:4.1s}
+    .petal:nth-child(7){left:90%;animation-duration:8s;animation-delay:1.4s}
+    @keyframes pf{0%{transform:translateY(-20px) rotate(0deg) translateX(0);opacity:0}10%{opacity:.6}50%{transform:translateY(50vh) rotate(180deg) translateX(35px)}100%{transform:translateY(110vh) rotate(360deg) translateX(-20px);opacity:0}}
+
+    /* NAV */
+    nav{position:fixed;top:0;left:0;right:0;z-index:1000;height:68px;display:flex;align-items:center;justify-content:space-between;padding:0 44px;background:rgba(10,10,20,.78);backdrop-filter:blur(24px);border-bottom:1px solid var(--border);animation:navIn .8s ease both}
+    @keyframes navIn{from{transform:translateY(-100%);opacity:0}to{transform:translateY(0);opacity:1}}
+    .nav-brand{display:flex;align-items:center;gap:12px;text-decoration:none}
+    .nav-logo{width:38px;height:38px;background:linear-gradient(135deg,var(--primary),var(--accent));border-radius:11px;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:.9rem;font-weight:900;color:#fff;box-shadow:0 4px 14px rgba(102,126,234,.35)}
+    .nav-name{font-family:'Playfair Display',serif;font-size:.95rem;font-weight:700;background:linear-gradient(135deg,#fff,var(--primary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .nav-right{display:flex;align-items:center;gap:14px}
+    .nav-socials{display:flex;align-items:center;gap:8px}
+    .soc-btn{width:34px;height:34px;border-radius:50%;border:1px solid var(--border);background:rgba(255,255,255,.04);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .3s ease;text-decoration:none;color:rgba(232,232,240,.6)}
+    .soc-btn:hover{transform:translateY(-3px) scale(1.12);border-color:transparent}
+    .soc-btn.ig:hover{background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);color:#fff;box-shadow:0 6px 18px rgba(220,39,67,.4)}
+    .soc-btn.tw:hover{background:#1da1f2;color:#fff;box-shadow:0 6px 18px rgba(29,161,242,.4)}
+    .soc-btn.yt:hover{background:#ff0000;color:#fff;box-shadow:0 6px 18px rgba(255,0,0,.4)}
+    .soc-btn.tk:hover{background:linear-gradient(135deg,#010101,#69c9d0);color:#fff;box-shadow:0 6px 18px rgba(105,201,208,.4)}
+    .soc-btn.fb:hover{background:#1877f2;color:#fff;box-shadow:0 6px 18px rgba(24,119,242,.4)}
+    .soc-btn.li:hover{background:#0a66c2;color:#fff;box-shadow:0 6px 18px rgba(10,102,194,.4)}
+    .soc-btn svg{width:15px;height:15px;fill:currentColor}
+    .nav-back{display:flex;align-items:center;gap:8px;color:rgba(232,232,240,.6);text-decoration:none;font-size:.84rem;padding:8px 20px;border:1px solid var(--border);border-radius:30px;background:rgba(255,255,255,.03);transition:all .3s ease}
+    .nav-back:hover{color:#fff;border-color:var(--primary);background:rgba(102,126,234,.12)}
+
+    /* HERO */
+    .hero{position:relative;z-index:2;padding:140px 40px 56px;text-align:center;max-width:720px;margin:0 auto}
+    .hero-pill{display:inline-flex;align-items:center;gap:8px;background:rgba(102,126,234,.1);border:1px solid rgba(102,126,234,.28);color:rgba(232,232,240,.75);font-size:.76rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:6px 18px;border-radius:30px;margin-bottom:22px;animation:fu .8s ease .2s both}
+    .pill-dot{width:6px;height:6px;background:var(--accent);border-radius:50%;animation:pd 1.6s ease-in-out infinite}
+    @keyframes pd{0%,100%{opacity:.4;transform:scale(1)}50%{opacity:1;transform:scale(1.5)}}
+    .hero h1{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,3.6rem);font-weight:900;line-height:1.1;background:linear-gradient(135deg,#fff 0%,var(--primary) 45%,var(--accent) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:14px;animation:fu .8s ease .4s both}
+    .hero p{font-size:.96rem;color:rgba(232,232,240,.52);line-height:1.85;max-width:480px;margin:0 auto 0;animation:fu .8s ease .6s both}
+    @keyframes fu{from{transform:translateY(26px);opacity:0}to{transform:translateY(0);opacity:1}}
+
+    /* TRANSLATOR MAIN */
+    .translator-wrap{position:relative;z-index:2;max-width:1100px;margin:0 auto;padding:40px 40px 80px}
+
+    /* Lang selector bar */
+    .lang-bar{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:28px;flex-wrap:wrap;animation:fu .8s ease .8s both}
+    .lang-select-wrap{position:relative;flex:1;max-width:280px}
+    .lang-select-wrap::after{content:'▾';position:absolute;right:16px;top:50%;transform:translateY(-50%);color:rgba(232,232,240,.4);pointer-events:none;font-size:.85rem}
+    select{width:100%;padding:12px 42px 12px 18px;background:var(--glass);border:1px solid var(--border);border-radius:16px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.9rem;appearance:none;cursor:pointer;transition:all .3s;outline:none;backdrop-filter:blur(12px)}
+    select:hover,select:focus{border-color:var(--primary);background:rgba(102,126,234,.08)}
+    select option{background:#0f0f1e;color:var(--text)}
+
+    .swap-btn{width:44px;height:44px;background:linear-gradient(135deg,var(--primary),var(--secondary));border:none;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.1rem;transition:all .35s cubic-bezier(.175,.885,.32,1.275);box-shadow:0 4px 14px rgba(102,126,234,.35);flex-shrink:0}
+    .swap-btn:hover{transform:rotate(180deg) scale(1.12);box-shadow:0 8px 24px rgba(102,126,234,.5)}
+
+    /* Text areas */
+    .text-panels{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px;animation:fu .8s ease 1s both}
+    .panel{background:var(--card);border:1px solid var(--border);border-radius:24px;overflow:hidden;transition:border-color .3s}
+    .panel:focus-within{border-color:var(--primary);box-shadow:0 0 0 3px rgba(102,126,234,.12)}
+    .panel-header{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid rgba(255,255,255,.05)}
+    .panel-lang-label{font-size:.78rem;font-weight:600;color:rgba(232,232,240,.5);letter-spacing:.08em;text-transform:uppercase}
+    .panel-actions{display:flex;gap:6px}
+    .pact-btn{width:30px;height:30px;border:1px solid rgba(255,255,255,.08);border-radius:8px;background:rgba(255,255,255,.03);cursor:pointer;display:flex;align-items:center;justify-content:center;color:rgba(232,232,240,.4);font-size:.85rem;transition:all .3s;position:relative}
+    .pact-btn:hover{border-color:var(--primary);color:var(--primary);background:rgba(102,126,234,.1);transform:translateY(-2px)}
+    .pact-btn svg{width:13px;height:13px;fill:currentColor}
+    textarea{width:100%;min-height:220px;padding:18px 20px;background:transparent;border:none;color:var(--text);font-family:'DM Sans',sans-serif;font-size:1rem;line-height:1.7;resize:vertical;outline:none}
+    textarea::placeholder{color:rgba(232,232,240,.22)}
+    .panel-footer{display:flex;align-items:center;justify-content:space-between;padding:10px 20px;border-top:1px solid rgba(255,255,255,.04)}
+    .char-count{font-size:.72rem;color:var(--muted)}
+    .detect-badge{font-size:.7rem;padding:3px 10px;background:rgba(102,126,234,.12);border:1px solid rgba(102,126,234,.25);color:rgba(102,126,234,.8);border-radius:20px;display:none}
+    .detect-badge.show{display:inline-block}
+
+    /* Translate button */
+    .translate-btn-wrap{display:flex;justify-content:center;gap:12px;margin-bottom:32px;animation:fu .8s ease 1.1s both}
+    .translate-btn{display:inline-flex;align-items:center;gap:10px;padding:14px 40px;background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;font-family:'DM Sans',sans-serif;font-size:.95rem;font-weight:600;border:none;border-radius:50px;cursor:pointer;transition:all .35s cubic-bezier(.175,.885,.32,1.275);box-shadow:0 6px 20px rgba(102,126,234,.35);position:relative;overflow:hidden}
+    .translate-btn::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.18),transparent);transition:left .5s ease}
+    .translate-btn:hover::before{left:100%}
+    .translate-btn:hover{transform:translateY(-3px) scale(1.04);box-shadow:0 12px 32px rgba(102,126,234,.5)}
+    .translate-btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+    .translate-btn svg{width:16px;height:16px;fill:currentColor}
+    .clear-btn{display:inline-flex;align-items:center;gap:8px;padding:14px 24px;background:rgba(255,255,255,.04);color:rgba(232,232,240,.5);font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:500;border:1px solid var(--border);border-radius:50px;cursor:pointer;transition:all .3s ease}
+    .clear-btn:hover{border-color:var(--pink);color:var(--pink);background:rgba(245,87,108,.08)}
+
+    /* Loading spinner */
+    .spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:none}
+    .translate-btn.loading .btn-text{display:none}
+    .translate-btn.loading .spinner{display:block}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    /* Quick languages */
+    .quick-langs{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-bottom:36px;animation:fu .8s ease 1.2s both}
+    .ql-btn{padding:6px 16px;border-radius:20px;background:rgba(255,255,255,.04);border:1px solid var(--border);color:rgba(232,232,240,.55);font-size:.76rem;cursor:pointer;transition:all .3s ease;font-family:'DM Sans',sans-serif}
+    .ql-btn:hover{background:rgba(102,126,234,.15);border-color:var(--primary);color:#fff;transform:translateY(-2px)}
+
+    /* History */
+    .history-section{animation:fu .8s ease 1.3s both}
+    .section-title{display:flex;align-items:center;gap:12px;margin-bottom:20px}
+    .section-title h3{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:#fff}
+    .section-title-line{flex:1;height:1px;background:var(--border)}
+    .history-grid{display:flex;flex-direction:column;gap:10px}
+    .hist-item{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px 20px;display:flex;align-items:flex-start;gap:14px;cursor:pointer;transition:all .3s ease}
+    .hist-item:hover{border-color:var(--primary);transform:translateX(4px);background:rgba(102,126,234,.06)}
+    .hist-langs{display:flex;align-items:center;gap:6px;flex-shrink:0;min-width:110px}
+    .hist-lang{font-size:.68rem;font-weight:600;padding:3px 9px;border-radius:12px;background:rgba(102,126,234,.12);border:1px solid rgba(102,126,234,.2);color:rgba(232,232,240,.6);white-space:nowrap}
+    .hist-arrow{color:rgba(232,232,240,.25);font-size:.75rem}
+    .hist-texts{flex:1;overflow:hidden}
+    .hist-src{font-size:.82rem;color:rgba(232,232,240,.7);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px}
+    .hist-tgt{font-size:.82rem;color:var(--primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .hist-del{background:none;border:none;color:rgba(232,232,240,.2);cursor:pointer;font-size:1rem;padding:2px 6px;border-radius:6px;transition:all .2s;flex-shrink:0}
+    .hist-del:hover{color:var(--pink);background:rgba(245,87,108,.1)}
+    .no-history{text-align:center;padding:28px;color:rgba(232,232,240,.25);font-size:.84rem}
+
+    /* Auto-translate indicator */
+    .auto-ind{font-size:.72rem;padding:3px 11px;border-radius:20px;transition:all .3s;display:inline-block;min-width:80px;text-align:center}
+    .auto-ind.waiting{background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.3);color:rgba(255,215,0,.8)}
+    .auto-ind.translating{background:rgba(102,126,234,.12);border:1px solid rgba(102,126,234,.3);color:rgba(102,126,234,.9);animation:indPulse .7s ease-in-out infinite}
+    .auto-ind.done{background:rgba(67,233,123,.1);border:1px solid rgba(67,233,123,.3);color:rgba(67,233,123,.9)}
+    @keyframes indPulse{0%,100%{opacity:.7}50%{opacity:1}}
+
+    /* Mic button */
+    .mic-btn{width:30px;height:30px;border:1px solid rgba(255,255,255,.08);border-radius:8px;background:rgba(255,255,255,.03);cursor:pointer;display:flex;align-items:center;justify-content:center;color:rgba(232,232,240,.4);font-size:.85rem;transition:all .3s;position:relative}
+    .mic-btn:hover{border-color:var(--pink);color:var(--pink);background:rgba(245,87,108,.1);transform:translateY(-2px)}
+    .mic-btn.listening{border-color:var(--pink)!important;color:var(--pink)!important;background:rgba(245,87,108,.18)!important;animation:micPulse 1s ease-in-out infinite}
+    @keyframes micPulse{0%,100%{box-shadow:0 0 0 0 rgba(245,87,108,.5)}50%{box-shadow:0 0 0 7px rgba(245,87,108,0)}}
+    .mic-btn svg{width:13px;height:13px;fill:currentColor}
+
+    /* Voice wave indicator */
+    .voice-bar{display:none;align-items:center;gap:3px;padding:6px 14px;background:rgba(245,87,108,.08);border:1px solid rgba(245,87,108,.25);border-radius:20px;margin-top:8px}
+    .voice-bar.show{display:flex}
+    .voice-bar-dot{width:3px;border-radius:2px;background:var(--pink);animation:vbar .6s ease-in-out infinite}
+    .voice-bar-dot:nth-child(1){height:8px;animation-delay:0s}
+    .voice-bar-dot:nth-child(2){height:14px;animation-delay:.1s}
+    .voice-bar-dot:nth-child(3){height:10px;animation-delay:.2s}
+    .voice-bar-dot:nth-child(4){height:16px;animation-delay:.3s}
+    .voice-bar-dot:nth-child(5){height:8px;animation-delay:.4s}
+    .voice-bar-dot:nth-child(6){height:12px;animation-delay:.15s}
+    .voice-bar-dot:nth-child(7){height:6px;animation-delay:.25s}
+    @keyframes vbar{0%,100%{transform:scaleY(1);opacity:.6}50%{transform:scaleY(1.6);opacity:1}}
+    .voice-bar-txt{font-size:.72rem;color:var(--pink);margin-left:6px;font-weight:500}
+
+    /* Toast */
+    .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);background:rgba(10,10,20,.95);border:1px solid var(--primary);color:#fff;padding:12px 24px;border-radius:30px;font-size:.84rem;z-index:9999;transition:transform .4s cubic-bezier(.175,.885,.32,1.275);backdrop-filter:blur(20px);box-shadow:0 8px 24px rgba(102,126,234,.3)}
+    .toast.show{transform:translateX(-50%) translateY(0)}
+
+    /* FOOTER */
+    .site-footer{position:relative;z-index:2;background:rgba(5,5,12,.9);border-top:1px solid var(--border);padding:52px 40px 36px}
+    .footer-inner{max-width:900px;margin:0 auto;display:flex;flex-direction:column;align-items:center;gap:28px;text-align:center}
+    .footer-brand{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:900;background:linear-gradient(135deg,#fff,var(--primary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .footer-tagline{font-size:.82rem;color:rgba(232,232,240,.35);max-width:340px;line-height:1.7}
+    .footer-socials{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center}
+    .fsoc{display:flex;align-items:center;gap:8px;padding:9px 20px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:30px;font-size:.75rem;color:rgba(232,232,240,.55);text-decoration:none;transition:all .3s ease;cursor:pointer}
+    .fsoc svg{width:14px;height:14px;fill:currentColor;flex-shrink:0}
+    .fsoc:hover{transform:translateY(-3px)}
+    .fsoc.ig:hover{border-color:#e6683c;color:#e6683c;background:rgba(220,39,67,.1);box-shadow:0 8px 20px rgba(220,39,67,.15)}
+    .fsoc.tw:hover{border-color:#1da1f2;color:#1da1f2;background:rgba(29,161,242,.1);box-shadow:0 8px 20px rgba(29,161,242,.15)}
+    .fsoc.yt:hover{border-color:#ff0000;color:#ff0000;background:rgba(255,0,0,.1);box-shadow:0 8px 20px rgba(255,0,0,.15)}
+    .fsoc.tk:hover{border-color:#69c9d0;color:#69c9d0;background:rgba(105,201,208,.1);box-shadow:0 8px 20px rgba(105,201,208,.15)}
+    .fsoc.fb:hover{border-color:#1877f2;color:#1877f2;background:rgba(24,119,242,.1);box-shadow:0 8px 20px rgba(24,119,242,.15)}
+    .fsoc.li:hover{border-color:#0a66c2;color:#0a66c2;background:rgba(10,102,194,.1);box-shadow:0 8px 20px rgba(10,102,194,.15)}
+    .footer-divider{width:100%;height:1px;background:var(--border)}
+    .footer-copy{color:rgba(232,232,240,.25);font-size:.78rem}
+    .footer-copy a{color:var(--primary);text-decoration:none}
+
+    .go-top{position:fixed;bottom:28px;right:28px;z-index:100;width:44px;height:44px;background:linear-gradient(135deg,var(--primary),var(--secondary));border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.1rem;box-shadow:0 8px 20px rgba(102,126,234,.4);transition:all .3s ease;opacity:0;transform:translateY(16px);pointer-events:none}
+    .go-top.vis{opacity:1;transform:translateY(0);pointer-events:all}
+    .go-top:hover{transform:translateY(-4px);box-shadow:0 12px 28px rgba(102,126,234,.6)}
+
+    @media(max-width:768px){
+      nav{padding:0 16px}.nav-socials{display:none}
+      .translator-wrap{padding:24px 16px 60px}
+      .text-panels{grid-template-columns:1fr}
+      .hero{padding:110px 20px 40px}
+      .quick-langs{gap:6px}
+    }
+  </style>
+</head>
+<body>
+
+<div class="cursor" id="cur"></div>
+<div class="cursor-ring" id="curRing"></div>
+<div class="bg-wrap">
+  <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+</div>
+<div class="sakura">
+  <div class="petal"></div><div class="petal"></div><div class="petal"></div>
+  <div class="petal"></div><div class="petal"></div><div class="petal"></div><div class="petal"></div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <a href="../index.html" class="nav-brand">
+    <div class="nav-logo">HS</div>
+    <span class="nav-name">Heshan Sayakkara</span>
+  </a>
+  <div class="nav-right">
+    <div class="nav-socials">
+      <a href="#" class="soc-btn ig" title="Instagram">
+        <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+      </a>
+      <a href="#" class="soc-btn tw" title="Twitter / X">
+        <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+      </a>
+      <a href="#" class="soc-btn yt" title="YouTube">
+        <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+      </a>
+      <a href="#" class="soc-btn tk" title="TikTok">
+        <svg viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
+      </a>
+      <a href="#" class="soc-btn fb" title="Facebook">
+        <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+      </a>
+    </div>
+    <a href="../index.html" class="nav-back">← Back to Portfolio</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-pill"><div class="pill-dot"></div>🌐 AI Powered · 100+ Languages</div>
+  <h1>Language Translator</h1>
+  <p>Instantly translate text between over 100 languages with AI — fast, accurate, and beautifully simple.</p>
+</div>
+
+<!-- TRANSLATOR -->
+<div class="translator-wrap">
+
+  <!-- Quick languages -->
+  <div class="quick-langs" id="quickLangs">
+    <button class="ql-btn" onclick="quickSet('en','si')">EN → සිංහල</button>
+    <button class="ql-btn" onclick="quickSet('en','ja')">EN → 日本語</button>
+    <button class="ql-btn" onclick="quickSet('en','zh')">EN → 中文</button>
+    <button class="ql-btn" onclick="quickSet('en','ar')">EN → العربية</button>
+    <button class="ql-btn" onclick="quickSet('en','fr')">EN → Français</button>
+    <button class="ql-btn" onclick="quickSet('en','de')">EN → Deutsch</button>
+    <button class="ql-btn" onclick="quickSet('en','es')">EN → Español</button>
+    <button class="ql-btn" onclick="quickSet('si','en')">සිංහල → EN</button>
+  </div>
+
+  <!-- Lang bar -->
+  <div class="lang-bar">
+    <div class="lang-select-wrap">
+      <select id="srcLang">
+        <option value="auto">🔍 Auto Detect</option>
+        <option value="en" selected>🇬🇧 English</option>
+        <option value="si">🇱🇰 Sinhala (සිංහල)</option>
+        <option value="ta">🇱🇰 Tamil (தமிழ்)</option>
+        <option value="ja">🇯🇵 Japanese</option>
+        <option value="zh">🇨🇳 Chinese (Simplified)</option>
+        <option value="zh-tw">🇹🇼 Chinese (Traditional)</option>
+        <option value="ko">🇰🇷 Korean</option>
+        <option value="ar">🇸🇦 Arabic</option>
+        <option value="fr">🇫🇷 French</option>
+        <option value="de">🇩🇪 German</option>
+        <option value="es">🇪🇸 Spanish</option>
+        <option value="pt">🇵🇹 Portuguese</option>
+        <option value="it">🇮🇹 Italian</option>
+        <option value="ru">🇷🇺 Russian</option>
+        <option value="hi">🇮🇳 Hindi</option>
+        <option value="bn">🇧🇩 Bengali</option>
+        <option value="id">🇮🇩 Indonesian</option>
+        <option value="ms">🇲🇾 Malay</option>
+        <option value="tr">🇹🇷 Turkish</option>
+        <option value="nl">🇳🇱 Dutch</option>
+        <option value="pl">🇵🇱 Polish</option>
+        <option value="sv">🇸🇪 Swedish</option>
+        <option value="th">🇹🇭 Thai</option>
+        <option value="vi">🇻🇳 Vietnamese</option>
+        <option value="uk">🇺🇦 Ukrainian</option>
+        <option value="el">🇬🇷 Greek</option>
+        <option value="he">🇮🇱 Hebrew</option>
+        <option value="fa">🇮🇷 Persian</option>
+        <option value="sw">🇰🇪 Swahili</option>
+        <option value="fi">🇫🇮 Finnish</option>
+        <option value="no">🇳🇴 Norwegian</option>
+        <option value="da">🇩🇰 Danish</option>
+        <option value="cs">🇨🇿 Czech</option>
+        <option value="hu">🇭🇺 Hungarian</option>
+        <option value="ro">🇷🇴 Romanian</option>
+      </select>
+    </div>
+    <button class="swap-btn" onclick="swapLangs()" title="Swap languages">⇄</button>
+    <div class="lang-select-wrap">
+      <select id="tgtLang">
+        <option value="en">🇬🇧 English</option>
+        <option value="si" selected>🇱🇰 Sinhala (සිංහල)</option>
+        <option value="ta">🇱🇰 Tamil (தமிழ்)</option>
+        <option value="ja">🇯🇵 Japanese</option>
+        <option value="zh">🇨🇳 Chinese (Simplified)</option>
+        <option value="zh-tw">🇹🇼 Chinese (Traditional)</option>
+        <option value="ko">🇰🇷 Korean</option>
+        <option value="ar">🇸🇦 Arabic</option>
+        <option value="fr">🇫🇷 French</option>
+        <option value="de">🇩🇪 German</option>
+        <option value="es">🇪🇸 Spanish</option>
+        <option value="pt">🇵🇹 Portuguese</option>
+        <option value="it">🇮🇹 Italian</option>
+        <option value="ru">🇷🇺 Russian</option>
+        <option value="hi">🇮🇳 Hindi</option>
+        <option value="bn">🇧🇩 Bengali</option>
+        <option value="id">🇮🇩 Indonesian</option>
+        <option value="ms">🇲🇾 Malay</option>
+        <option value="tr">🇹🇷 Turkish</option>
+        <option value="nl">🇳🇱 Dutch</option>
+        <option value="pl">🇵🇱 Polish</option>
+        <option value="sv">🇸🇪 Swedish</option>
+        <option value="th">🇹🇭 Thai</option>
+        <option value="vi">🇻🇳 Vietnamese</option>
+        <option value="uk">🇺🇦 Ukrainian</option>
+        <option value="el">🇬🇷 Greek</option>
+        <option value="he">🇮🇱 Hebrew</option>
+        <option value="fa">🇮🇷 Persian</option>
+        <option value="sw">🇰🇪 Swahili</option>
+        <option value="fi">🇫🇮 Finnish</option>
+        <option value="no">🇳🇴 Norwegian</option>
+        <option value="da">🇩🇰 Danish</option>
+        <option value="cs">🇨🇿 Czech</option>
+        <option value="hu">🇭🇺 Hungarian</option>
+        <option value="ro">🇷🇴 Romanian</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Text panels -->
+  <div class="text-panels">
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-lang-label" id="srcLabel">Source Text</span>
+        <div class="panel-actions">
+          <button class="mic-btn" id="micBtn" onclick="toggleVoice()" title="Voice Typing — Click to speak">
+            <svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm-1-9c0-.55.45-1 1-1s1 .45 1 1v6c0 .55-.45 1-1 1s-1-.45-1-1V5zm6 6c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
+          </button>
+          <button class="pact-btn" onclick="pasteText()" title="Paste">
+            <svg viewBox="0 0 24 24"><path d="M19 2h-4.18C14.4.84 13.3 0 12 0c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm7 18H5V4h2v3h10V4h2v16z"/></svg>
+          </button>
+          <button class="pact-btn" onclick="speakText('src')" title="Listen">
+            <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+          </button>
+        </div>
+      </div>
+      <textarea id="srcText" placeholder="Enter text to translate... or click 🎤 to speak" maxlength="5000" oninput="updateChar()"></textarea>
+      <div class="voice-bar" id="voiceBar">
+        <div class="voice-bar-dot"></div><div class="voice-bar-dot"></div><div class="voice-bar-dot"></div>
+        <div class="voice-bar-dot"></div><div class="voice-bar-dot"></div><div class="voice-bar-dot"></div>
+        <div class="voice-bar-dot"></div>
+        <span class="voice-bar-txt">🎤 Listening... speak now</span>
+      </div>
+      <div class="panel-footer">
+        <span class="char-count" id="charCount">0 / 5000</span>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span class="auto-ind" id="autoInd"></span>
+          <span class="detect-badge" id="detectBadge">Detected: English</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-lang-label" id="tgtLabel">Translation</span>
+        <div class="panel-actions">
+          <button class="pact-btn" onclick="copyTranslation()" title="Copy">
+            <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+          </button>
+          <button class="pact-btn" onclick="speakText('tgt')" title="Listen">
+            <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+          </button>
+        </div>
+      </div>
+      <textarea id="tgtText" placeholder="Translation will appear here..." readonly></textarea>
+      <div class="panel-footer">
+        <span class="char-count" id="tgtCharCount">0 chars</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Buttons -->
+  <div class="translate-btn-wrap">
+    <button class="translate-btn" id="translateBtn" onclick="doTranslate()">
+      <span class="btn-text">
+        <svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:currentColor;display:inline-block;vertical-align:middle;margin-right:6px"><path d="M12.87 15.07l-2.54-2.51.03-.03c1.74-1.94 2.98-4.17 3.71-6.53H17V4h-7V2H8v2H1v1.99h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"/></svg>
+        Translate
+      </span>
+      <div class="spinner"></div>
+    </button>
+    <button class="clear-btn" onclick="clearAll()">✕ Clear</button>
+  </div>
+
+  <!-- History -->
+  <div class="history-section" id="historySection">
+    <div class="section-title">
+      <h3>🕐 Recent Translations</h3>
+      <div class="section-title-line"></div>
+    </div>
+    <div class="history-grid" id="historyGrid">
+      <div class="no-history">No recent translations yet — start translating above!</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-brand">Heshan Sayakkara</div>
+    <p class="footer-tagline">Language Translator — Breaking language barriers with AI-powered translation.</p>
+    <div class="footer-socials">
+      <a href="https://www.instagram.com/heshansayakkara?igsh=MWRuNWh6cXptZHQ5bQ==" class="fsoc ig">
+        <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+        Instagram
+      </a>
+      
+      <a href="https://youtube.com/@heshansayakkara62?si=HdSUJGPfMwafB_xs" class="fsoc yt">
+        <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+        YouTube
+      </a>
+      <a href="https://www.tiktok.com/@heshansayakkara623?_r=1&_t=ZS-94ZJUmVS3zp" class="fsoc tk">
+        <svg viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
+        TikTok
+      </a>
+      <a href="#" class="fsoc fb">
+        <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+        Facebook
+      </a>
+      <a href="https://www.linkedin.com/in/heshan-sayakkara-90b4313a3?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" class="fsoc li">
+        <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+        LinkedIn
+      </a>
+    </div>
+    <div class="footer-divider"></div>
+    <p class="footer-copy">© 2026 <a href="../index.html">Heshan Sayakkara</a> · Language Translator · Powered by AI</p>
+  </div>
+</footer>
+
+<button class="go-top" id="goTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+<div class="toast" id="toast"></div>
+
+<script>
+// Cursor
+const cur=document.getElementById('cur'),ring=document.getElementById('curRing');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
+(function loop(){cur.style.left=mx+'px';cur.style.top=my+'px';rx+=(mx-rx)*.12;ry+=(my-ry)*.12;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(loop);})();
+document.querySelectorAll('a,button,select,textarea').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{cur.style.width='18px';cur.style.height='18px';ring.style.width='52px';ring.style.height='52px';});
+  el.addEventListener('mouseleave',()=>{cur.style.width='10px';cur.style.height='10px';ring.style.width='32px';ring.style.height='32px';});
+});
+
+// Scroll top
+const gt=document.getElementById('goTop');
+window.addEventListener('scroll',()=>gt.classList.toggle('vis',window.scrollY>360));
+
+// Language names map
+const langNames={
+  'auto':'Auto Detect','en':'English','si':'Sinhala','ta':'Tamil','ja':'Japanese',
+  'zh':'Chinese (Simplified)','zh-tw':'Chinese (Traditional)','ko':'Korean','ar':'Arabic',
+  'fr':'French','de':'German','es':'Spanish','pt':'Portuguese','it':'Italian',
+  'ru':'Russian','hi':'Hindi','bn':'Bengali','id':'Indonesian','ms':'Malay',
+  'tr':'Turkish','nl':'Dutch','pl':'Polish','sv':'Swedish','th':'Thai',
+  'vi':'Vietnamese','uk':'Ukrainian','el':'Greek','he':'Hebrew','fa':'Persian',
+  'sw':'Swahili','fi':'Finnish','no':'Norwegian','da':'Danish','cs':'Czech',
+  'hu':'Hungarian','ro':'Romanian'
+};
+
+// Update labels
+function updateLabels(){
+  const sl=document.getElementById('srcLang').value;
+  const tl=document.getElementById('tgtLang').value;
+  document.getElementById('srcLabel').textContent=sl==='auto'?'Source (Auto)':langNames[sl]||'Source';
+  document.getElementById('tgtLabel').textContent=langNames[tl]||'Translation';
+}
+document.getElementById('srcLang').addEventListener('change',()=>{updateLabels();if(document.getElementById('srcText').value.trim())scheduleAutoTranslate();});
+document.getElementById('tgtLang').addEventListener('change',()=>{updateLabels();if(document.getElementById('srcText').value.trim())scheduleAutoTranslate();});
+updateLabels();
+
+// Auto-translate debounce
+let autoTimer=null;
+function scheduleAutoTranslate(){
+  clearTimeout(autoTimer);
+  const v=document.getElementById('srcText').value.trim();
+  if(!v){
+    document.getElementById('tgtText').value='';
+    document.getElementById('tgtCharCount').textContent='0 chars';
+    setAutoIndicator('idle');
+    return;
+  }
+  setAutoIndicator('waiting');
+  autoTimer=setTimeout(()=>{
+    setAutoIndicator('translating');
+    doTranslate(true);
+  },800);
+}
+function setAutoIndicator(state){
+  const ind=document.getElementById('autoInd');
+  if(!ind)return;
+  if(state==='idle'){ind.textContent='';ind.className='auto-ind';}
+  else if(state==='waiting'){ind.textContent='⏳ Waiting...';ind.className='auto-ind waiting';}
+  else if(state==='translating'){ind.textContent='⚡ Translating...';ind.className='auto-ind translating';}
+  else if(state==='done'){ind.textContent='✓ Translated';ind.className='auto-ind done';setTimeout(()=>setAutoIndicator('idle'),2000);}
+}
+// Char count
+function updateChar(){
+  const v=document.getElementById('srcText').value;
+  document.getElementById('charCount').textContent=v.length+' / 5000';
+  scheduleAutoTranslate();
+}
+
+// Quick set
+function quickSet(src,tgt){
+  document.getElementById('srcLang').value=src;
+  document.getElementById('tgtLang').value=tgt;
+  updateLabels();
+  showToast('Language pair set: '+langNames[src]+' → '+langNames[tgt]);
+}
+
+// Swap
+function swapLangs(){
+  const s=document.getElementById('srcLang');
+  const t=document.getElementById('tgtLang');
+  const srcT=document.getElementById('srcText');
+  const tgtT=document.getElementById('tgtText');
+  if(s.value==='auto'){showToast('Cannot swap from Auto Detect');return;}
+  const sv=s.value,tv=t.value;
+  s.value=tv;t.value=sv;
+  const srcV=srcT.value,tgtV=tgtT.value;
+  srcT.value=tgtV;tgtT.value=srcV;
+  updateLabels();updateChar();
+  document.getElementById('tgtCharCount').textContent=tgtT.value.length+' chars';
+}
+
+// History
+let history=[];
+function renderHistory(){
+  const g=document.getElementById('historyGrid');
+  if(!history.length){g.innerHTML='<div class="no-history">No recent translations yet — start translating above!</div>';return;}
+  g.innerHTML=history.slice(0,8).map((h,i)=>`
+    <div class="hist-item" onclick="loadHistory(${i})">
+      <div class="hist-langs">
+        <span class="hist-lang">${langNames[h.src]||h.src}</span>
+        <span class="hist-arrow">→</span>
+        <span class="hist-lang">${langNames[h.tgt]||h.tgt}</span>
+      </div>
+      <div class="hist-texts">
+        <div class="hist-src">${h.srcText}</div>
+        <div class="hist-tgt">${h.tgtText}</div>
+      </div>
+      <button class="hist-del" onclick="event.stopPropagation();delHistory(${i})">✕</button>
+    </div>`).join('');
+}
+function loadHistory(i){
+  const h=history[i];
+  document.getElementById('srcLang').value=h.src;
+  document.getElementById('tgtLang').value=h.tgt;
+  document.getElementById('srcText').value=h.srcText;
+  document.getElementById('tgtText').value=h.tgtText;
+  updateLabels();updateChar();
+  document.getElementById('tgtCharCount').textContent=h.tgtText.length+' chars';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function delHistory(i){
+  history.splice(i,1);renderHistory();
+}
+
+// Toast
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2600);
+}
+
+// Copy
+async function copyTranslation(){
+  const v=document.getElementById('tgtText').value;
+  if(!v){showToast('Nothing to copy yet!');return;}
+  try{await navigator.clipboard.writeText(v);showToast('✓ Copied to clipboard!');}
+  catch{showToast('Copy failed — please select and copy manually');}
+}
+
+// Paste
+async function pasteText(){
+  try{const v=await navigator.clipboard.readText();document.getElementById('srcText').value=v;updateChar();showToast('✓ Pasted from clipboard!');}
+  catch{showToast('Paste failed — please paste manually');}
+}
+
+// Speak
+function speakText(side){
+  const txt=document.getElementById(side==='src'?'srcText':'tgtText').value;
+  if(!txt){showToast('Nothing to speak yet!');return;}
+  const lang=side==='src'?document.getElementById('srcLang').value:document.getElementById('tgtLang').value;
+  const u=new SpeechSynthesisUtterance(txt);
+  const langMap={'en':'en-US','si':'si-LK','ta':'ta-IN','ja':'ja-JP','zh':'zh-CN','ko':'ko-KR','ar':'ar-SA','fr':'fr-FR','de':'de-DE','es':'es-ES','pt':'pt-PT','it':'it-IT','ru':'ru-RU','hi':'hi-IN'};
+  u.lang=langMap[lang]||lang;
+  window.speechSynthesis.cancel();
+  window.speechSynthesis.speak(u);
+  showToast('🔊 Speaking...');
+}
+
+// Clear
+function clearAll(){
+  document.getElementById('srcText').value='';
+  document.getElementById('tgtText').value='';
+  document.getElementById('charCount').textContent='0 / 5000';
+  document.getElementById('tgtCharCount').textContent='0 chars';
+  document.getElementById('detectBadge').classList.remove('show');
+}
+
+// Translate via Google Translate (free, no CORS issues)
+async function doTranslate(silent=false){
+  const srcText=document.getElementById('srcText').value.trim();
+  if(!srcText){showToast('Please enter some text to translate!');return;}
+  const srcLang=document.getElementById('srcLang').value;
+  const tgtLang=document.getElementById('tgtLang').value;
+
+  const btn=document.getElementById('translateBtn');
+  if(!silent){btn.classList.add('loading');btn.disabled=true;}
+
+  try{
+    const sl=srcLang==='auto'?'auto':srcLang;
+    const url=`https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sl}&tl=${tgtLang}&dt=t&q=${encodeURIComponent(srcText)}`;
+    const res=await fetch(url);
+    const data=await res.json();
+
+    // Google returns nested arrays — flatten all translated segments
+    let translated='';
+    if(data&&data[0]){
+      data[0].forEach(seg=>{if(seg&&seg[0])translated+=seg[0];});
+    }
+    translated=translated.trim();
+
+    if(!translated){showToast('Translation failed — try again');btn.classList.remove('loading');btn.disabled=false;return;}
+
+    document.getElementById('tgtText').value=translated;
+    document.getElementById('tgtCharCount').textContent=translated.length+' chars';
+
+    // Show detected language if auto
+    if(srcLang==='auto'&&data[2]){
+      const det=langNames[data[2]]||data[2];
+      document.getElementById('detectBadge').textContent='Detected: '+det;
+      document.getElementById('detectBadge').classList.add('show');
+    }
+
+    // Add to history
+    history.unshift({
+      src:srcLang==='auto'?(data[2]||'auto'):srcLang,
+      tgt:tgtLang,
+      srcText:srcText.slice(0,80)+(srcText.length>80?'…':''),
+      tgtText:translated.slice(0,80)+(translated.length>80?'…':'')
+    });
+    if(history.length>20)history.pop();
+    renderHistory();
+    if(!silent)showToast('✓ Translation complete!');
+    setAutoIndicator('done');
+  }catch(e){
+    if(!silent)showToast('Network error — check your internet and try again');
+    setAutoIndicator('idle');
+    console.error(e);
+  }finally{
+    btn.classList.remove('loading');btn.disabled=false;
+  }
+}
+
+// Keyboard shortcut Ctrl+Enter
+document.getElementById('srcText').addEventListener('keydown',e=>{
+  if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){e.preventDefault();doTranslate();}
+});
+
+// VOICE TYPING
+let recognition=null;
+let isListening=false;
+function toggleVoice(){
+  if(!('webkitSpeechRecognition' in window)&&!('SpeechRecognition' in window)){showToast('Voice typing needs Chrome!');return;}
+  if(isListening){stopVoice();return;}
+  startVoice();
+}
+function startVoice(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  recognition=new SR();
+  const sl=document.getElementById('srcLang').value;
+  const vm={'en':'en-US','si':'si-LK','ta':'ta-IN','ja':'ja-JP','zh':'zh-CN','zh-tw':'zh-TW','ko':'ko-KR','ar':'ar-SA','fr':'fr-FR','de':'de-DE','es':'es-ES','pt':'pt-PT','it':'it-IT','ru':'ru-RU','hi':'hi-IN','bn':'bn-BD','id':'id-ID','ms':'ms-MY','tr':'tr-TR','nl':'nl-NL','pl':'pl-PL','sv':'sv-SE','th':'th-TH','vi':'vi-VN','uk':'uk-UA','el':'el-GR','he':'he-IL','fa':'fa-IR','fi':'fi-FI','no':'no-NO','da':'da-DK','cs':'cs-CZ','hu':'hu-HU','ro':'ro-RO','sw':'sw-KE','auto':'en-US'};
+  recognition.lang=vm[sl]||'en-US';
+  recognition.continuous=true;
+  recognition.interimResults=true;
+  let finalT='';
+  recognition.onstart=()=>{isListening=true;document.getElementById('micBtn').classList.add('listening');document.getElementById('voiceBar').classList.add('show');showToast('Listening... speak now');};
+  recognition.onresult=(e)=>{let interim='';for(let i=e.resultIndex;i<e.results.length;i++){if(e.results[i].isFinal){finalT+=e.results[i][0].transcript+' ';}else{interim+=e.results[i][0].transcript;}}document.getElementById('srcText').value=finalT+interim;updateChar();};
+  recognition.onerror=(e)=>{if(e.error==='not-allowed'){showToast('Microphone blocked — allow mic in browser settings');}else{showToast('Voice error: '+e.error);}stopVoice();};
+  recognition.onend=()=>{if(isListening){try{recognition.start();}catch(err){stopVoice();}}};
+  recognition.start();
+}
+function stopVoice(){
+  isListening=false;
+  if(recognition){try{recognition.stop();}catch(e){}}
+  document.getElementById('micBtn').classList.remove('listening');
+  document.getElementById('voiceBar').classList.remove('show');
+  showToast('Voice typing stopped');
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&isListening)stopVoice();});
+
+renderHistory();
+</script>
+</body>
+</html>

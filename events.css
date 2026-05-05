@@ -1,0 +1,450 @@
+/*===== SNOW FALLING EFFECT =====*/
+.snowflake {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1.2em;
+  font-family: Arial, sans-serif;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+  position: fixed;
+  top: -10%;
+  z-index: 9998;
+  user-select: none;
+  cursor: default;
+  pointer-events: none;
+  animation: snowflakes-shake 3s ease-in-out infinite;
+  will-change: transform;
+}
+
+.snowflake .inner {
+  animation: snowflakes-fall 10s linear infinite;
+  will-change: transform;
+}
+
+@keyframes snowflakes-fall {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(110vh);
+    opacity: 0.3;
+  }
+}
+
+@keyframes snowflakes-shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(80px);
+  }
+}
+
+/* Individual snowflake positioning with varied delays */
+.snowflake:nth-of-type(1) {
+  left: 10%;
+  animation-delay: 0s;
+  font-size: 1em;
+}
+
+.snowflake:nth-of-type(1) .inner {
+  animation-delay: 0s;
+  animation-duration: 8s;
+}
+
+.snowflake:nth-of-type(2) {
+  left: 20%;
+  animation-delay: 1s;
+  font-size: 1.4em;
+}
+
+.snowflake:nth-of-type(2) .inner {
+  animation-delay: 2s;
+  animation-duration: 11s;
+}
+
+.snowflake:nth-of-type(3) {
+  left: 30%;
+  animation-delay: 0.5s;
+  font-size: 0.9em;
+}
+
+.snowflake:nth-of-type(3) .inner {
+  animation-delay: 4s;
+  animation-duration: 9s;
+}
+
+.snowflake:nth-of-type(4) {
+  left: 40%;
+  animation-delay: 2s;
+  font-size: 1.2em;
+}
+
+.snowflake:nth-of-type(4) .inner {
+  animation-delay: 1s;
+  animation-duration: 10s;
+}
+
+.snowflake:nth-of-type(5) {
+  left: 50%;
+  animation-delay: 3s;
+  font-size: 1.1em;
+}
+
+.snowflake:nth-of-type(5) .inner {
+  animation-delay: 3s;
+  animation-duration: 12s;
+}
+
+.snowflake:nth-of-type(6) {
+  left: 60%;
+  animation-delay: 2s;
+  font-size: 1.3em;
+}
+
+.snowflake:nth-of-type(6) .inner {
+  animation-delay: 6s;
+  animation-duration: 9s;
+}
+
+.snowflake:nth-of-type(7) {
+  left: 70%;
+  animation-delay: 1s;
+  font-size: 0.95em;
+}
+
+.snowflake:nth-of-type(7) .inner {
+  animation-delay: 2.5s;
+  animation-duration: 11s;
+}
+
+.snowflake:nth-of-type(8) {
+  left: 80%;
+  animation-delay: 0s;
+  font-size: 1.15em;
+}
+
+.snowflake:nth-of-type(8) .inner {
+  animation-delay: 1s;
+  animation-duration: 10s;
+}
+
+.snowflake:nth-of-type(9) {
+  left: 90%;
+  animation-delay: 1.5s;
+  font-size: 1.25em;
+}
+
+.snowflake:nth-of-type(9) .inner {
+  animation-delay: 3s;
+  animation-duration: 8s;
+}
+
+.snowflake:nth-of-type(10) {
+  left: 25%;
+  animation-delay: 0s;
+  font-size: 1.05em;
+}
+
+.snowflake:nth-of-type(10) .inner {
+  animation-delay: 2s;
+  animation-duration: 11s;
+}
+
+.snowflake:nth-of-type(11) {
+  left: 65%;
+  animation-delay: 2.5s;
+  font-size: 0.85em;
+}
+
+.snowflake:nth-of-type(11) .inner {
+  animation-delay: 4s;
+  animation-duration: 9s;
+}
+
+.snowflake:nth-of-type(12) {
+  left: 85%;
+  animation-delay: 1s;
+  font-size: 1.35em;
+}
+
+.snowflake:nth-of-type(12) .inner {
+  animation-delay: 7s;
+  animation-duration: 10s;
+}
+
+/*===== PERFORMANCE OPTIMIZATIONS =====*/
+@media (prefers-reduced-motion: reduce) {
+  .snowflake,
+  .snowflake .inner{
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+/* Hide snow on very small screens for performance */
+@media screen and (max-width: 480px) {
+  .snowflake:nth-of-type(n+7) {
+    display: none;
+  }
+}
+
+/*===== DARK/LIGHT MODE ADJUSTMENTS =====*/
+@media (prefers-color-scheme: light) {
+  .snowflake {
+    color: rgba(200, 220, 255, 0.8);
+    text-shadow: 0 0 8px rgba(102, 126, 234, 0.4);
+  }
+}
+
+/*===== ADVANCED MODERN NEW YEAR BANNER =====*/
+.newyear-banner {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(1);
+  padding: 2.5rem 3.5rem 2.5rem 3.5rem;
+  border: none;
+  border-radius: 2rem;
+  text-align: center;
+  max-width: 480px;
+  color: var(--text-color);
+  background: var(--body-color);
+  border: 2px solid var(--border-color);
+  z-index: 100000;
+  overflow: visible;
+  animation: banner-pop 0.7s cubic-bezier(.68,-0.55,.27,1.55);
+}
+
+@keyframes banner-pop {
+  0% { transform: translate(-50%, -50%) scale(0.7); opacity: 0; }
+  80% { transform: translate(-50%, -50%) scale(1.05); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}
+
+.newyear-banner .year-top {
+  font-size: 5.5rem;
+  font-weight: 900;
+  margin-bottom: 1.5rem;
+  letter-spacing: 0.1em;
+  background: var(--text-color) ;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: var(--text-color);
+}
+
+.newyear-banner h2 {
+  font-size: 2.1rem;
+  margin-bottom: 1.1rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.12);
+}
+
+.newyear-banner p {
+  font-size: 1.18rem;
+  margin-bottom: 2rem;
+  font-weight: 500;
+}
+
+.newyear-banner .close-btn {
+  position: absolute;
+  top: 18px;
+  right: 22px;
+  background: rgba(255,255,255,0.12);
+  border: none;
+  font-size: 2rem;
+  color: #fff;
+  cursor: pointer;
+  border-radius: 50%;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+.newyear-banner .close-btn:hover {
+  background: rgba(255,255,255,0.25);
+}
+
+
+@media (max-width: 600px) {
+  .newyear-banner {
+    padding: 1.2rem 0.5rem 1.2rem 0.5rem;
+    max-width: 98vw;
+  }
+}
+
+/*===== SAKURA PETALS FALLING EFFECT =====*/
+.sakura-petals {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 9998;
+}
+
+.petal {
+  position: absolute;
+  top: -10%;
+  font-size: 1.5rem;
+  opacity: 0.9;
+  animation: petal-fall linear infinite;
+  will-change: transform;
+  z-index: 9998;
+}
+
+/* Simplified animation - combine movement and rotation */
+@keyframes petal-fall {
+  0% {
+    transform: translateY(0) translateX(0) rotate(0deg);
+    opacity: 0.9;
+  }
+  50% {
+    transform: translateY(50vh) translateX(50px) rotate(180deg);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(110vh) translateX(0) rotate(360deg);
+    opacity: 0.3;
+  }
+}
+
+/* Individual petal positioning with varied delays and durations */
+.petal:nth-child(1) {
+  left: 5%;
+  animation-duration: 12s;
+  animation-delay: 0s;
+  font-size: 1.2rem;
+}
+.petal:nth-child(2) {
+  left: 15%;
+  animation-duration: 10s;
+  animation-delay: 2s;
+  font-size: 1.4rem;
+}
+.petal:nth-child(3) {
+  left: 25%;
+  animation-duration: 14s;
+  animation-delay: 1s;
+  font-size: 1.3rem;
+}
+.petal:nth-child(4) {
+  left: 35%;
+  animation-duration: 11s;
+  animation-delay: 3s;
+  font-size: 1.1rem;
+}
+.petal:nth-child(5) {
+  left: 45%;
+  animation-duration: 13s;
+  animation-delay: 0s;
+  font-size: 1.5rem;
+}
+.petal:nth-child(6) {
+  left: 55%;
+  animation-duration: 9s;
+  animation-delay: 2s;
+  font-size: 1.2rem;
+}
+.petal:nth-child(7) {
+  left: 65%;
+  animation-duration: 12s;
+  animation-delay: 1s;
+  font-size: 1.4rem;
+}
+.petal:nth-child(8) {
+  left: 75%;
+  animation-duration: 10s;
+  animation-delay: 3s;
+  font-size: 1.3rem;
+}
+.petal:nth-child(9) {
+  left: 85%;
+  animation-duration: 14s;
+  animation-delay: 0s;
+  font-size: 1.1rem;
+}
+.petal:nth-child(10) {
+  left: 20%;
+  animation-duration: 11s;
+  animation-delay: 2s;
+  font-size: 1.4rem;
+}
+.petal:nth-child(11) {
+  left: 50%;
+  animation-duration: 13s;
+  animation-delay: 1s;
+  font-size: 1.2rem;
+}
+.petal:nth-child(12) {
+  left: 80%;
+  animation-duration: 9s;
+  animation-delay: 3s;
+  font-size: 1.5rem;
+}
+.petal:nth-child(13) {
+  left: 30%;
+  animation-duration: 12s;
+  animation-delay: 0s;
+  font-size: 1.3rem;
+}
+.petal:nth-child(14) {
+  left: 60%;
+  animation-duration: 10s;
+  animation-delay: 2s;
+  font-size: 1.1rem;
+}
+.petal:nth-child(15) {
+  left: 90%;
+  animation-duration: 14s;
+  animation-delay: 1s;
+  font-size: 1.4rem;
+}
+
+/* Petal colors - pink variations */
+.petal:nth-child(1)::before,
+.petal:nth-child(4)::before,
+.petal:nth-child(7)::before,
+.petal:nth-child(10)::before,
+.petal:nth-child(13)::before {
+  content: "🌸";
+  color: #ffb7d5;
+}
+.petal:nth-child(2)::before,
+.petal:nth-child(5)::before,
+.petal:nth-child(8)::before,
+.petal:nth-child(11)::before,
+.petal:nth-child(14)::before {
+  content: "🌸";
+  color: #ff9ec0;
+}
+.petal:nth-child(3)::before,
+.petal:nth-child(6)::before,
+.petal:nth-child(9)::before,
+.petal:nth-child(12)::before,
+.petal:nth-child(15)::before {
+  content: "🌸";
+  color: #ff85ab;
+}
+
+/* Performance optimizations */
+@media (prefers-reduced-motion: reduce) {
+  .petal {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+/* Hide some petals on mobile for performance */
+@media screen and (max-width: 768px) {
+  .petal:nth-child(n+10) {
+    display: none;
+  }
+}
+

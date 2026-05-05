@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>Payment Details</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <style>
+        :root {
+            --background: linear-gradient(135deg, #f0f4ff 0%, #dce8f5 100%);
+            --card-bg: #ffffff;
+            --card-shadow: 0 10px 40px rgba(60, 80, 140, 0.13);
+            --text: #1a202c;
+            --label: #64748b;
+            --field-bg: #f4f7fb;
+            --border: rgba(200, 215, 240, 0.7);
+            --button-bg: linear-gradient(90deg, #ffb300 0%, #ff7c00 100%);
+            --button-text: #fff;
+            --accent: #ff8c00;
+            --badge-bg: #fff7ed;
+            --badge-text: #c05e00;
+        }
+
+        body.dark {
+            --background: linear-gradient(135deg, #181d35 0%, #0f1220 100%);
+            --card-bg: #1e2440;
+            --card-shadow: 0 10px 40px rgba(10, 15, 40, 0.5);
+            --text: #e8eaf6;
+            --label: #8b9ecf;
+            --field-bg: #141829;
+            --border: rgba(60, 80, 150, 0.35);
+            --button-bg: linear-gradient(90deg, #ffb300 0%, #ff7c00 100%);
+            --button-text: #fff;
+            --accent: #ffb300;
+            --badge-bg: rgba(255, 140, 0, 0.1);
+            --badge-text: #ffb300;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            min-height: 100vh;
+            background: var(--background);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Sora', sans-serif;
+            transition: background 0.35s;
+            padding: 2rem 1rem;
+        }
+
+        .page-wrapper {
+            width: 100%;
+            max-width: 860px;
+        }
+
+        /* Dark mode toggle — top right of page */
+        .theme-toggle {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 1.5rem;
+        }
+
+        .toggle-btn {
+            background: var(--card-bg);
+            border: 1.5px solid var(--border);
+            box-shadow: var(--card-shadow);
+            border-radius: 50px;
+            padding: 0.45rem 1.1rem;
+            font-size: 18px;
+            cursor: pointer;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: background 0.3s, box-shadow 0.3s;
+        }
+
+        .toggle-btn span {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--label);
+            letter-spacing: 0.5px;
+        }
+
+        .cards-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.75rem;
+        }
+
+        @media (max-width: 640px) {
+            .cards-container { grid-template-columns: 1fr; }
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 24px;
+            box-shadow: var(--card-shadow);
+            border: 1.5px solid var(--border);
+            padding: 2.2rem 1.8rem 2rem;
+            text-align: center;
+            transition: background 0.35s, box-shadow 0.35s, transform 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            background: var(--button-bg);
+            border-radius: 24px 24px 0 0;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 18px 48px rgba(60, 80, 140, 0.18);
+        }
+
+        body.dark .card:hover {
+            box-shadow: 0 18px 48px rgba(10, 15, 40, 0.65);
+        }
+
+        .bank-logo-wrap {
+            width: 68px;
+            height: 68px;
+            border-radius: 18px;
+            background: var(--field-bg);
+            border: 1.5px solid var(--border);
+            margin: 0 auto 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(60, 80, 140, 0.1);
+        }
+
+        .bank-logo {
+            width: 52px;
+            height: 52px;
+            object-fit: contain;
+        }
+
+        .bank-badge {
+            display: inline-block;
+            background: var(--badge-bg);
+            color: var(--badge-text);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            padding: 0.3rem 0.85rem;
+            border-radius: 50px;
+            margin-bottom: 1.2rem;
+        }
+
+        h2 {
+            color: var(--text);
+            font-weight: 700;
+            font-size: 20px;
+            margin-bottom: 1.3rem;
+            letter-spacing: 0.3px;
+        }
+
+        .details-box {
+            background: var(--field-bg);
+            border-radius: 16px;
+            padding: 1.2rem 1.3rem;
+            margin-bottom: 1.3rem;
+            text-align: left;
+            transition: background 0.35s;
+        }
+
+        .detail-row {
+            padding: 0.65rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .detail-row:first-child {
+            padding-top: 0;
+        }
+
+        .label {
+            color: var(--label);
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 3px;
+        }
+
+        .value {
+            font-weight: 600;
+            font-size: 15.5px;
+            color: var(--text);
+            letter-spacing: 0.3px;
+        }
+
+        .value.account-number {
+            font-family: 'DM Mono', monospace;
+            font-size: 15px;
+            letter-spacing: 1.5px;
+            color: var(--accent);
+        }
+
+        .copy-btn {
+            background: var(--button-bg);
+            color: var(--button-text);
+            border: none;
+            border-radius: 12px;
+            padding: 0.85rem 0;
+            width: 100%;
+            font-family: 'Sora', sans-serif;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(255, 140, 0, 0.25);
+            transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
+            letter-spacing: 0.8px;
+        }
+
+        .copy-btn:hover {
+            opacity: 0.92;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 22px rgba(255, 140, 0, 0.35);
+        }
+
+        .copy-btn:active {
+            transform: translateY(0);
+        }
+
+        .copy-btn.copied {
+            background: linear-gradient(90deg, #22c55e 0%, #16a34a 100%);
+            box-shadow: 0 4px 16px rgba(34, 197, 94, 0.3);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page-wrapper">
+        <div class="theme-toggle">
+            <button class="toggle-btn" id="toggleDark" aria-label="Toggle dark mode">
+                <span id="toggleIcon">☀️</span>
+                <span id="toggleLabel">Light</span>
+            </button>
+        </div>
+
+        <div class="cards-container">
+            <!-- People's Bank Card -->
+            <div class="card">
+                <div class="bank-logo-wrap">
+                    <img src="https://play-lh.googleusercontent.com/CAE5Dqv39y2lZdGMLjgjNRw5eJBIraFy6LiyCu7cDYd-azxQn4mX-Ct6AifMYoGaGA=w3840-h2160-rw"
+                        alt="People's Bank Logo" class="bank-logo" />
+                </div>
+                <div class="bank-badge">People's Bank</div>
+                <h2>Payment Details</h2>
+                <div class="details-box">
+                    <div class="detail-row">
+                        <div class="label">Account Name</div>
+                        <div class="value">S.O HESHAN</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="label">Account Number</div>
+                        <div class="value account-number">349200130018303</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="label">Branch</div>
+                        <div class="value">Pallebedda</div>
+                    </div>
+                </div>
+                <button class="copy-btn" data-copy="S.O HESHAN&#10;349200130018303&#10;Pallebedda (People's Bank)">Copy Details</button>
+            </div>
+
+            <!-- Bank of Ceylon Card -->
+            <div class="card">
+                <div class="bank-logo-wrap">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxQOOBaMUP8s1foRJ-93JZnfHELQkd9nCRW1DxLhgb1A&s"
+                        alt="Bank of Ceylon Logo" class="bank-logo" />
+                </div>
+                <div class="bank-badge">Bank of Ceylon</div>
+                <h2>Payment Details</h2>
+                <div class="details-box">
+                    <div class="detail-row">
+                        <div class="label">Account Name</div>
+                        <div class="value">S.O HESHAN</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="label">Account Number</div>
+                        <div class="value account-number">94001826</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="label">Branch</div>
+                        <div class="value">Pallebedda</div>
+                    </div>
+                </div>
+                <button class="copy-btn" data-copy="S.O HESHAN&#10;94001826&#10;Pallebedda (Bank of Ceylon)">Copy Details</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dark mode toggle
+        const toggleBtn = document.getElementById('toggleDark');
+        const toggleIcon = document.getElementById('toggleIcon');
+        const toggleLabel = document.getElementById('toggleLabel');
+
+        function setDarkMode(dark) {
+            document.body.classList.toggle('dark', dark);
+            toggleIcon.textContent = dark ? '🌙' : '☀️';
+            toggleLabel.textContent = dark ? 'Dark' : 'Light';
+        }
+
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+        setDarkMode(prefersDark.matches);
+        prefersDark.addEventListener('change', e => setDarkMode(e.matches));
+        toggleBtn.addEventListener('click', () => setDarkMode(!document.body.classList.contains('dark')));
+
+        // Copy buttons with visual feedback
+        document.querySelectorAll('.copy-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                const text = btn.getAttribute('data-copy');
+                navigator.clipboard.writeText(text).then(() => {
+                    btn.textContent = '✓ Copied!';
+                    btn.classList.add('copied');
+                    setTimeout(() => {
+                        btn.textContent = 'Copy Details';
+                        btn.classList.remove('copied');
+                    }, 2000);
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

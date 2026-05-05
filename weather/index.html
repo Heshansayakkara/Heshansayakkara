@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather - Sri Lanka</title>
+    
+  <link rel="stylesheet" href="../assets/css/fonts.css" />
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            font-family: "Poppins", sans-serif;
+        }
+
+        .header-bar {
+            position: fixed;
+            top: 5px;
+            left: auto;
+            right: 5px;
+            width: 250px;
+            height: 48px;
+            background-color: rgb(255, 255, 255);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            padding: 0 24px;
+            border-radius: 12px;
+           
+        }
+		.left-bar{
+			position: fixed;
+            top: 45%;
+            left: 5px;
+            right: auto;
+            width: 58px;
+            height: 100px;
+            background-color: rgb(255, 255, 255);
+            align-items: center;
+            z-index: 1000;
+            border-radius: 12px;
+		}
+		.button{
+		  margin-top:6px;
+		  margin-left:7px;
+          margin-right:auto;
+          align-items: center;
+		  width:45px;
+		  height:40px;
+		  background-color:#fff;
+		  border: 2px solid #0460CC;
+          border-radius: 12px;
+		  text-align:center;
+		  font-size:11px;
+		  font-weight: 600;
+		  font-family: "Poppins", sans-serif;
+		}
+
+        .active
+        {
+            background-color: #0460CC;
+            color: white;
+        }
+	
+
+        .site-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-align:center;
+            color: #000000;
+        }
+
+        .ventusky-logo {
+            font-size: 1rem;
+            font-weight: 400;
+            opacity: 0.8;
+        }
+
+        .map {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+            background: #000;
+            z-index: 1;
+        }
+
+        .map iframe {
+            width: 100vw;
+            height: 100vh;
+            border: none;
+            display: block;
+        }
+
+        /* Ripple effect for .step using pure CSS */
+        .step {
+            position: relative;
+            display: flex;
+            height: 22px;
+            width: 22px;
+            border: 2px solid #0460CC;
+            border-radius: 100%;
+            background: #FFFFFF;
+            box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.25);
+            margin-right: 10px;
+        }
+
+        .step span {
+            position: relative;
+            font-size: 72px;
+            top: 5px;
+            left: -5px;
+        }
+
+        .step::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 100%;
+            width: 100%;
+            background: #0460CC;
+            border-radius: 100%;
+            opacity: 0;
+            z-index: -1;
+            animation: ripple 3s infinite cubic-bezier(.65, 0, .34, 1);
+        }
+
+        @keyframes ripple {
+            from {
+                opacity: 1;
+                transform: scale3d(0.75, 0.75, 1);
+            }
+
+            to {
+                opacity: 0;
+                transform: scale3d(2, 2, 1);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header-bar">
+        <div class="step"></div>
+        <span class="site-title">Sri Lanaka Weather Live</span>
+
+    </div>
+    <div class="left-bar">
+		<button onclick="changew()" id="windbtn" class="button active">Wind</button>
+		<button onclick="changer()" id="rainbtn" class="button">Rain</button>
+	</div>
+    <div class="map">
+        <iframe id="wind" src="https://embed.ventusky.com/?p=8.8;80.6;5&l=wind-10m&m=icon" loading="lazy" allowfullscreen ></iframe>
+		<iframe id="rain" src="https://embed.ventusky.com/?p=10.1;81.7;5&l=rain-3h&m=icon" allowfullscreen  loading="lazy" ></iframe>
+    </div>
+	<script>
+	const winds = document.getElementById("wind");
+    const rains = document.getElementById("rain");
+    const winds_btn = document.getElementById("windbtn");
+    const rains_btn = document.getElementById("rainbtn");
+	
+	 
+     function changer() {
+        rains_btn.classList.add("active");
+        winds_btn.classList.remove("active"); 
+        winds.style.display = 'none';
+        rains.style.display = 'block';
+    
+    }
+    function changew() {
+        winds_btn.classList.add("active");
+        rains_btn.classList.remove("active"); 
+        rains.style.display = 'none';
+        winds.style.display = 'block';
+    
+    }
+	
+	
+	</script>
+</body>
+</html>
