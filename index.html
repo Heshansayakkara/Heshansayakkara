@@ -2006,4 +2006,11 @@
         setTimeout(() => alertSuccess.classList.remove('show'), 5000);
       } catch(err) {
         errorText.textContent = 'Failed to send message. Please try again.';
-        ale
+        alertError.classList.add('show');
+      } finally {
+        submitBtn.disabled = false;
+        btnText.textContent = 'Send Message ✉️';
+      }
+    });
+  </script>
+        
