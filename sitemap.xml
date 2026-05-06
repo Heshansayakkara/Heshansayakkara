@@ -1,47 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset
-      xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
-            http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
-<!-- created with Free Online Sitemap Generator www.xml-sitemaps.com -->
+<urlset xmlns="https://www.sitemaps.org/schemas/sitemap/0.9">
 
+  <url>
+    <loc>https://www.heshansayakkara.top/</loc>
+    <priority>1.00</priority>
+  </url>
 
-<url>
-  <loc>https://www.heshansayakkara.top/</loc>
-  <lastmod>2026-05-04T15:19:16+00:00</lastmod>
-  <priority>1.00</priority>
-</url>
-<url>
-  <loc>https://www.heshansayakkara.top/AIImageBlog/</loc>
-  <lastmod>2026-05-04T15:19:18+00:00</lastmod>
-  <priority>0.80</priority>
-</url>
-<url>
-  <loc>https://www.heshansayakkara.top/AIVideoBlog/</loc>
-  <lastmod>2026-05-03T17:08:52+00:00</lastmod>
-  <priority>0.80</priority>
-</url>
-<url>
-  <loc>https://www.heshansayakkara.top/weather/</loc>
-  <lastmod>2026-05-04T15:19:17+00:00</lastmod>
-  <priority>0.80</priority>
-</url>
-<url>
-  <loc>https://www.heshansayakkara.top/qr/index%20.html</loc>
-  <lastmod>2026-05-04T15:19:18+00:00</lastmod>
-  <priority>0.80</priority>
-</url>
-<url>
-  <loc>https://www.heshansayakkara.top/tansletar/index.html</loc>
-  <lastmod>2026-05-04T15:19:18+00:00</lastmod>
-  <priority>0.80</priority>
-</url>
-<url>
-  <loc>https://www.heshansayakkara.top/index.html</loc>
-  <lastmod>2026-05-04T15:19:18+00:00</lastmod>
-  <priority>0.64</priority>
-</url>
+  <url>
+    <loc>https://www.heshansayakkara.top/AllImageBlog/</loc>
+    <priority>0.80</priority>
+  </url>
 
+  <url>
+    <loc>https://www.heshansayakkara.top/AIVideoBlog/</loc>
+    <priority>0.80</priority>
+  </url>
+
+  <url>
+    <loc>https://www.heshansayakkara.top/socialmedia/</loc>
+    <priority>0.80</priority>
+  </url>
+
+  <url>
+    <loc>https://www.heshansayakkara.top/qr/</loc>
+    <priority>0.70</priority>
+  </url>
+
+  <url>
+    <loc>https://www.heshansayakkara.top/weather/</loc>
+    <priority>0.70</priority>
+  </url>
+
+  <url>
+    <loc>https://www.heshansayakkara.top/tansletar/</loc>
+    <priority>0.70</priority>
+  </url>
+
+  <url>
+    <loc>https://www.heshansayakkara.top/Payment/</loc>
+    <priority>0.60</priority>
+  </url>
 
 </urlset>
